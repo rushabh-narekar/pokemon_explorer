@@ -37,7 +37,7 @@ test.describe("Responsive layout", () => {
 
     await expect(page.getByRole("navigation").getByRole("link", { name: "Home" })).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: "Pokémon", exact: true })).toBeVisible();
-    await expect(page.getByRole("searchbox")).toBeVisible();
+    await expect(page.locator("#pokemon-search")).toBeVisible();
     await expect(page.getByRole("button", { name: "Search", exact: true })).toBeVisible();
     await expect(page.getByRole("group", { name: "Sort" })).toBeVisible();
   });
@@ -46,7 +46,7 @@ test.describe("Responsive layout", () => {
     await page.setViewportSize({ width: 768, height: 1024 });
     await page.goto("/pokemon");
 
-    await expect(page.getByRole("searchbox")).toBeVisible();
+    await expect(page.locator("#pokemon-search")).toBeVisible();
     await expect(page.getByRole("button", { name: "Name A–Z" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Name Z–A" })).toBeVisible();
   });

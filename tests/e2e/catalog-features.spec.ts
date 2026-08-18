@@ -42,9 +42,37 @@ const pokemonDetails: Record<string, object> = {
     abilities: [],
     stats: [],
   },
+  pidgey: {
+    id: 16,
+    name: "pidgey",
+    height: 3,
+    weight: 18,
+    sprites: { front_default: null },
+    types: [{ slot: 1, type: { name: "normal", url: "" } }],
+    abilities: [],
+    stats: [],
+  },
 };
 
 async function mockCatalogApi(page: import("@playwright/test").Page) {
+  await page.route("**/api/v2/pokemon?limit=2000", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        count: 4,
+        next: null,
+        previous: null,
+        results: [
+          { name: "pikachu", url: "https://pokeapi.co/api/v2/pokemon/25/" },
+          { name: "pidgey", url: "https://pokeapi.co/api/v2/pokemon/16/" },
+          { name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/" },
+          { name: "charmander", url: "https://pokeapi.co/api/v2/pokemon/4/" },
+        ],
+      }),
+    });
+  });
+
   await page.route("**/api/v2/pokemon?limit=20&offset=0", async (route) => {
     await route.fulfill({
       status: 200,
@@ -64,6 +92,7 @@ async function mockCatalogApi(page: import("@playwright/test").Page) {
     const idToName: Record<string, string> = {
       "1": "bulbasaur",
       "4": "charmander",
+      "16": "pidgey",
       "25": "pikachu",
     };
     const name = idToName[slug] ?? slug;
@@ -104,9 +133,19 @@ test.describe("Catalog search and sort", () => {
     await expect(names.nth(2)).toHaveText("Bulbasaur");
   });
 
+  test("searches by partial name while typing", async ({ page }) => {
+    await page.goto("/pokemon");
+    await page.locator("#pokemon-search").fill("pi");
+
+    await expect(page).toHaveURL(/search=pi/, { timeout: 10_000 });
+    await expect(page.getByText(/matches for/i)).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("heading", { name: "Pikachu", level: 2 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Pidgey", level: 2 })).toBeVisible();
+  });
+
   test("searches by exact name and clears back to catalog", async ({ page }) => {
     await page.goto("/pokemon");
-    await page.getByRole("searchbox").fill("pikachu");
+    await page.locator("#pokemon-search").fill("pikachu");
     await page.getByRole("button", { name: "Search", exact: true }).click();
 
     await expect(page).toHaveURL(/search=pikachu/);
@@ -115,13 +154,13 @@ test.describe("Catalog search and sort", () => {
 
     await page.getByRole("button", { name: "Clear search" }).click();
     await expect(page).toHaveURL(/\/pokemon(?:\?sort=name-asc)?$/);
-    await expect(page.getByRole("searchbox")).toHaveValue("");
+    await expect(page.locator("#pokemon-search")).toHaveValue("");
     await expect(page.getByRole("heading", { name: "Bulbasaur", level: 2 })).toBeVisible();
   });
 
   test("searches by numeric id", async ({ page }) => {
     await page.goto("/pokemon");
-    await page.getByRole("searchbox").fill("25");
+    await page.locator("#pokemon-search").fill("25");
     await page.getByRole("button", { name: "Search", exact: true }).click();
 
     await expect(page).toHaveURL(/search=25/);
@@ -132,7 +171,7 @@ test.describe("Catalog search and sort", () => {
 
   test("shows not-found for invalid search without breaking navigation", async ({ page }) => {
     await page.goto("/pokemon");
-    await page.getByRole("searchbox").fill("not-a-real-mon");
+    await page.locator("#pokemon-search").fill("not-a-real-mon");
     await page.getByRole("button", { name: "Search", exact: true }).click();
 
     await expect(page).toHaveURL(/search=not-a-real-mon/);

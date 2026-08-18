@@ -2,7 +2,6 @@ export const POKEAPI_BASE_URL = "https://pokeapi.co/api/v2";
 
 export const PAGE_SIZE = 20;
 
-/** Cache Pokémon responses for 24 hours — the public API data rarely changes. */
 export const REVALIDATE_SECONDS = 86_400;
 
 export const FEATURED_POKEMON = [
@@ -25,7 +24,6 @@ export const STAT_LABELS: Record<string, string> = {
   speed: "Speed",
 };
 
-/** Official Pokémon brand colors used in the UI. */
 export const POKEMON_BRAND = {
   yellow: "#FFCB05",
   yellowDark: "#E6B800",
@@ -44,7 +42,6 @@ export interface TypeStyle {
   text: string;
 }
 
-/** Type badge colors matched to the games. */
 export const TYPE_STYLES: Record<string, TypeStyle> = {
   normal: { bg: "#A8A878", text: "#FFFFFF" },
   fire: { bg: "#F08030", text: "#FFFFFF" },

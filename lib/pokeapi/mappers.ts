@@ -75,6 +75,5 @@ export function mapSpeciesToInfo(data: PokemonSpeciesApiResponse): PokemonSpecie
     habitat: data.habitat?.name ? formatPokemonName(data.habitat.name) : null,
     description: englishDescription ?? null,
     captureRate: data.capture_rate ?? null,
-    evolutionChainUrl: data.evolution_chain?.url ?? null,
   };
 }

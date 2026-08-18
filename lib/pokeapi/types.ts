@@ -44,8 +44,6 @@ export interface PokemonSpeciesApiResponse {
   capture_rate: number;
 }
 
-/** Domain models consumed by the UI */
-
 export interface PokemonTypeInfo {
   name: string;
   slot: number;
@@ -81,7 +79,6 @@ export interface PokemonSpeciesInfo {
   habitat: string | null;
   description: string | null;
   captureRate: number | null;
-  evolutionChainUrl: string | null;
 }
 
 export interface PokemonListResult {

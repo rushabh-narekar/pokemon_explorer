@@ -102,7 +102,7 @@ test.describe("Pokémon Explorer journeys", () => {
     });
 
     await page.goto("/pokemon");
-    await expect(page.getByRole("alert").filter({ hasText: "could not load" })).toBeVisible();
+    await expect(page.getByRole("alert").filter({ hasText: /couldn.?t load/i })).toBeVisible();
 
     await page.unroute("**/api/v2/pokemon?limit=20&offset=0");
     await page.route("**/api/v2/pokemon?limit=20&offset=0", async (route) => {

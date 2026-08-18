@@ -77,23 +77,6 @@ export default function PokemonDetailView({ pokemon, species }: PokemonDetailVie
             <p className="break-words leading-7 text-muted">{species.description}</p>
           </section>
         ) : null}
-
-        {species.evolutionChainUrl ? (
-          <section aria-labelledby="evolution-heading" className="panel-card detail-panel">
-            <h2 id="evolution-heading" className="section-heading">
-              Evolution
-            </h2>
-            <p className="text-muted">See how this Pokémon evolves in the full evolution chain.</p>
-            <a
-              href={species.evolutionChainUrl}
-              className="btn-ghost mt-4 inline-flex !text-[var(--pokemon-blue)]"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              View evolution chain
-            </a>
-          </section>
-        ) : null}
       </div>
     </div>
   );

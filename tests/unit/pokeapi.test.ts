@@ -80,7 +80,6 @@ describe("mappers", () => {
       description:
         "When several of these Pokémon gather, their electricity builds.",
       captureRate: 190,
-      evolutionChainUrl: "https://pokeapi.co/api/v2/evolution-chain/10/",
     });
   });
 });

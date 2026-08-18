@@ -24,7 +24,7 @@ export default function SiteHeader() {
   return (
     <header className="site-header">
       <div className="site-header-inner">
-        <Link href="/" className="site-brand group focus-pokemon">
+        <Link href="/" prefetch={false} className="site-brand group focus-pokemon">
           <span
             className="site-brand-mark"
             aria-hidden="true"
@@ -33,7 +33,7 @@ export default function SiteHeader() {
           </span>
           <span className="site-brand-copy">
             <span className="site-brand-title">Pokémon Explorer</span>
-            <span className="site-brand-tagline">Discover · Search · Save</span>
+            <span className="site-brand-tagline">browse · search · save</span>
           </span>
         </Link>
         <nav aria-label="Primary" className="site-nav">
@@ -44,7 +44,7 @@ export default function SiteHeader() {
                 <li key={item.href} className="min-w-0">
                   <Link
                     href={item.href}
-                    prefetch={item.href === "/about" ? false : undefined}
+                    prefetch={false}
                     aria-current={active ? "page" : undefined}
                     className={cn(
                       "site-nav-link",

@@ -1,9 +1,5 @@
 const MAX_POKEMON_ID = 10_277;
 
-/**
- * Normalizes catalog search input into a PokéAPI id or slug.
- * Returns null for empty or invalid input.
- */
 export function normalizePokemonQuery(input: string): string | number | null {
   const trimmed = input.trim();
   if (!trimmed) {

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fredoka, Nunito_Sans } from "next/font/google";
 import SkipLink from "@/components/layout/SkipLink";
+import ExtensionNoiseFilter from "@/components/layout/ExtensionNoiseFilter";
 import SiteHeader from "@/components/layout/SiteHeader";
 import ToastProvider from "@/components/ui/toast/ToastProvider";
 import { StoreProvider } from "@/store/provider";
@@ -43,8 +44,13 @@ export default function RootLayout({
       lang="en"
       data-scroll-behavior="smooth"
       className={`${fredoka.variable} ${nunito.variable} min-h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="flex min-h-dvh flex-col text-[var(--pokemon-navy)]">
+      <body
+        className="flex min-h-dvh flex-col text-[var(--pokemon-navy)]"
+        suppressHydrationWarning
+      >
+        <ExtensionNoiseFilter />
         <StoreProvider>
           <ToastProvider>
             <SkipLink />

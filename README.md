@@ -1,142 +1,84 @@
 # Pokémon Explorer
 
-Browse [PokéAPI](https://pokeapi.co/) in the browser: flip through the catalog, look up a species by name or number, and star the ones you want to keep.
+Small Next.js app that pulls from [PokéAPI](https://pokeapi.co/). You can browse a paginated catalog, open detail pages, star favorites, and come back to them later — favorites live in the browser, not on a server.
 
-Built with Next.js App Router, RTK Query for the interactive catalog, and Redux for favorites saved to `localStorage`.
+## What's in here
 
-## Features
+Home page shows six featured Pokémon (fetched on the server). The catalog handles pagination, live search as you type, and A→Z / Z→A sort on whatever's loaded. Detail pages pull stats, abilities, and species flavor text. There are loading, empty, error, and not-found screens so nothing just spins forever.
 
-- Featured Pokémon on the home page (server-rendered)
-- Catalog with pagination, search, and A→Z / Z→A sort
-- Detail pages with stats, abilities, species info, and artwork
-- Favorites that survive a reload
-- Loading, empty, not-found, and error states throughout
+Built with Next.js 16, React 19, TypeScript, Tailwind v4, Redux Toolkit + RTK Query. Tests are Vitest + Playwright.
 
-## Stack
+## Setup
 
-Next.js 16 · React 19 · TypeScript (strict) · Tailwind v4 · Redux Toolkit + RTK Query · Vitest · Playwright
-
-## Requirements
-
-Node.js 20+ and npm 10+. No `.env` file needed.
-
-## Quick start
+Need Node 20+.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open http://localhost:3000
+App runs at http://localhost:3000. No env file — it's all public PokéAPI.
 
-## Development
-
-```bash
-npm run dev
-```
-
-## Production
+Other useful commands:
 
 ```bash
-npm run build
-npm run start
-```
-
-## Tests and checks
-
-```bash
-npm run test        # unit + component
-npm run test:e2e    # Playwright (run once: npx playwright install chromium)
+npm run build && npm run start   # production
+npm run test                     # unit + component
+npm run test:e2e                 # browser tests (install chromium once: npx playwright install chromium)
 npm run lint
 npm run type-check
 ```
 
-## Scripts
+## How the code is split
 
-| Command | What it does |
-| --- | --- |
-| `npm run dev` | Dev server |
-| `npm run build` | Production build |
-| `npm run start` | Serve the production build |
-| `npm run test` | Unit + component tests (Vitest) |
-| `npm run test:e2e` | End-to-end tests (Playwright) |
-| `npm run lint` | ESLint |
-| `npm run type-check` | `tsc --noEmit` |
+I kept most pages as Server Components. Home and `/pokemon/[name]` fetch in `lib/pokeapi/client.ts` with native `fetch` and 24-hour revalidation. Detail pages request Pokémon + species at the same time via `Promise.all`.
 
-## Project layout
+The catalog at `/pokemon` is different — it's a client island because pagination, search-as-you-type, and RTK Query caching are easier on the client. Favorites use a Redux slice written to `localStorage` after hydration so the server never touches browser storage.
 
-```
-app/           Routes and route-level loading/error UI
-components/    UI pieces and small client islands
-lib/pokeapi/   Fetch helpers, types, mappers
-store/         Redux store, RTK Query API, favorites slice
-tests/         unit/, component/, e2e/
-docs/          ARCHITECTURE.md, TRADE_OFFS.md
-```
+Rough map:
 
-## Server vs client
+- `/` — server fetch for featured list
+- `/pokemon` — RTK Query (`store/pokemon-api.ts`)
+- `/pokemon/[name]` — server fetch, Pokémon + species in parallel
+- `/favorites` — server shell, client list from Redux
+- `/about` — static notes on the architecture
 
-| Route | Renders on | Data |
-| --- | --- | --- |
-| `/` | Server | `getPokemonSummaries` |
-| `/pokemon` | Client (`CatalogPage`) | RTK Query |
-| `/pokemon/[name]` | Server | `getPokemon` + `getPokemonSpecies` |
-| `/favorites` | Server shell + client list | Redux / localStorage |
-| `/about` | Server | Static |
+Redux only wraps what needs it: catalog toolbar, favorite buttons, toasts. Server files don't import RTK hooks.
 
-Redux mounts once in `StoreProvider`. Server Components never call RTK Query hooks or touch `localStorage`.
+## RTK Query
 
-## RTK Query (`store/pokemon-api.ts`)
+Two endpoints in `store/pokemon-api.ts`:
 
-Two endpoints:
+- `getPokemonCatalogPage` — one list call + up to 20 detail calls per page
+- `getPokemonByNameOrId` — lookup by name or id
+- `searchPokemonSummaries` — partial name match for live search (uses a cached name list)
+- `getPokemonNameIndex` — name list for suggestions, cached about an hour
 
-1. **`getPokemonCatalogPage`** — paginated list, then detail for up to 20 cards on that page
-2. **`getPokemonByNameOrId`** — exact lookup when searching
+Tags are `Catalog:{offset}-{limit}` and `Pokemon:{nameOrId}`. Stale data refetches after ~30s; unused cache clears after 5 minutes.
 
-Cache tags: `Catalog:{offset}-{limit}` and `Pokemon:{nameOrId}`. Entries stick around for ~30s before a background refetch; unused cache is dropped after 5 minutes.
+## Caching and API usage
 
-## Caching
+PokéAPI is free but easy to hammer, so the app is conservative:
 
-- **Server:** `fetch` with `revalidate: 86400` (24 hours)
-- **Client:** RTK Query slice cache
-- **Sort / filter:** runs on whatever is already loaded — no extra API calls
+- 20 Pokémon per catalog page, 6 on the home page
+- Sort runs on data already in memory — no extra round trips for reordering
+- Live search loads a name index once, then filters locally and fetches detail for matches (cap 20)
+- Server routes revalidate once a day
 
-## Favorites
-
-Stored under the key `pokemon-explorer-favorites` in `localStorage`, synced from a Redux slice after the client hydrates. The server always renders an empty list first so there is no hydration mismatch.
+Sort only affects the current page, not the full dex. Favorites don't sync across devices.
 
 ## Prefetch
 
-Nav links use default Next.js prefetch. Catalog cards prefetch detail routes for the first four visible cards only. `/about` has prefetch turned off.
-
-## PokéAPI usage
-
-- Page size capped at 20
-- No full-dex download
-- At most one list request + twenty detail requests per catalog page
-- Server routes revalidate daily to avoid hammering the API
+Normal Next.js Link prefetch on nav. Catalog cards prefetch the first four detail routes on a page. `/about` has prefetch turned off — not worth it.
 
 ## Accessibility
 
-Skip link, landmarks, labeled form controls, visible focus rings, stat values as text (not color-only), artwork fallback when an image fails.
+Skip link, landmarks, labels on search/sort, focus rings, stat numbers shown as text (not just colored bars), fallback when artwork fails.
 
-## Known gaps
+## Stuff I didn't build
 
-- Search is exact match only (name or id)
-- Sort applies to the current page, not the whole dex
-- Favorites are per-browser, not synced across devices
-- Evolution chain is a link out, not an in-app tree
-- No type filter yet
+Evolution tree UI, type filter, offline mode, cross-device favorites. Partial search covers name typing but there's no full fuzzy index. Fine for a take-home; I'd add a page-scoped type filter first if I had more time.
 
-## Future improvements
+## Weird console errors in dev?
 
-Prefetch on card focus, a type filter scoped to the current page, favorite export/import, and static pages for a few popular species. Nothing here is started — see `docs/TRADE_OFFS.md` for the reasoning.
-
-## Trade-offs
-
-I skipped fuzzy search, global type filters, evolution trees, and offline mode to keep API usage predictable and the codebase small enough to review in one sitting. Details in `docs/TRADE_OFFS.md`.
-
-## Docs
-
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — why things are split the way they are
-- [`docs/TRADE_OFFS.md`](docs/TRADE_OFFS.md) — what got cut and what I'd add next
+If you see `chrome-extension://` errors or hydration warnings about `bis_skin_checked`, a browser extension (VPN, ad blocker, Bitdefender) is probably modifying the page before React loads. Incognito with extensions off usually fixes it.
