@@ -17,7 +17,7 @@ export default async function HomePage() {
             Browse the Pokédex, pick favorites, actually read the stats.
           </h1>
           <p className="mt-4 text-base leading-8 text-white/90 sm:text-lg">
-            Data comes from PokéAPI. Search by name or number, paginate through the list, star what you like.
+            Data comes from a public Pokémon API. Search by name or number, paginate through the list, star what you like.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link href="/pokemon" prefetch={false} className="btn-primary">

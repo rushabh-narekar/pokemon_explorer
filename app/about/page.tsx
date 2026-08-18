@@ -11,14 +11,7 @@ export default function AboutPage() {
       <header className="space-y-3">
         <h1 className="page-title">About this app</h1>
         <p className="page-lead">
-          Pokémon data from{" "}
-          <a
-            href="https://pokeapi.co/"
-            className="font-bold text-[var(--pokemon-blue)] underline-offset-2 hover:underline focus-pokemon rounded-sm"
-          >
-            PokéAPI
-          </a>
-          . This page is a quick rundown of how the code is split up.
+          This page is a quick rundown of how the code is split up.
         </p>
       </header>
 

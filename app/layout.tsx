@@ -58,15 +58,6 @@ export default function RootLayout({
             <main id="main-content" className="page-shell">
               {children}
             </main>
-            <footer className="site-footer">
-              Data provided by{" "}
-              <a
-                href="https://pokeapi.co/"
-                className="site-footer-link"
-              >
-                PokéAPI
-              </a>
-            </footer>
           </ToastProvider>
         </StoreProvider>
       </body>
