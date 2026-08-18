@@ -3,7 +3,6 @@
 import ErrorMessage from "@/components/ui/ErrorMessage";
 
 export default function PokemonCatalogError({
-  error,
   reset,
 }: {
   error: Error & { digest?: string };
@@ -12,7 +11,7 @@ export default function PokemonCatalogError({
   return (
     <ErrorMessage
       title="Catalog unavailable"
-      message={error.message || "The catalog could not be loaded."}
+      message="We couldn't load the catalog right now. Please try again."
       onRetry={reset}
     />
   );

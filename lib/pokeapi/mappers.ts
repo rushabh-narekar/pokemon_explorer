@@ -63,6 +63,11 @@ export function mapPokemonToDetails(data: PokemonApiResponse): PokemonDetails {
   };
 }
 
+function parseEvolutionChainId(url: string): number | null {
+  const match = url.match(/evolution-chain\/(\d+)\/?$/);
+  return match ? Number(match[1]) : null;
+}
+
 export function mapSpeciesToInfo(data: PokemonSpeciesApiResponse): PokemonSpeciesInfo {
   const englishGenus = data.genera.find((entry) => entry.language.name === "en");
   const englishDescription = data.flavor_text_entries
@@ -75,5 +80,6 @@ export function mapSpeciesToInfo(data: PokemonSpeciesApiResponse): PokemonSpecie
     habitat: data.habitat?.name ? formatPokemonName(data.habitat.name) : null,
     description: englishDescription ?? null,
     captureRate: data.capture_rate ?? null,
+    evolutionChainId: parseEvolutionChainId(data.evolution_chain.url),
   };
 }

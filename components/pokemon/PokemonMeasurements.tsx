@@ -3,6 +3,7 @@ interface PokemonMeasurementsProps {
   weight: string;
   habitat: string | null;
   captureRate: number | null;
+  evolutionChainId: number | null;
 }
 
 export default function PokemonMeasurements({
@@ -10,6 +11,7 @@ export default function PokemonMeasurements({
   weight,
   habitat,
   captureRate,
+  evolutionChainId,
 }: PokemonMeasurementsProps) {
   return (
     <dl className="grid gap-4 sm:grid-cols-2">
@@ -31,6 +33,12 @@ export default function PokemonMeasurements({
         <div className="rounded-xl border-2 border-[var(--pokemon-gray-light)] bg-[var(--pokemon-cream)] px-4 py-3">
           <dt className="text-sm font-semibold text-muted">Capture rate</dt>
           <dd className="font-display text-lg font-bold text-navy">{captureRate}</dd>
+        </div>
+      ) : null}
+      {evolutionChainId !== null ? (
+        <div className="rounded-xl border-2 border-[var(--pokemon-gray-light)] bg-[var(--pokemon-cream)] px-4 py-3">
+          <dt className="text-sm font-semibold text-muted">Evolution chain</dt>
+          <dd className="font-display text-lg font-bold text-navy">#{evolutionChainId}</dd>
         </div>
       ) : null}
     </dl>

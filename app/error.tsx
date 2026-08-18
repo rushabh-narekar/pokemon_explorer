@@ -3,7 +3,6 @@
 import ErrorMessage from "@/components/ui/ErrorMessage";
 
 export default function GlobalError({
-  error,
   reset,
 }: {
   error: Error & { digest?: string };
@@ -12,7 +11,7 @@ export default function GlobalError({
   return (
     <ErrorMessage
       title="Application error"
-      message={error.message || "An unexpected error occurred."}
+      message="Something went wrong loading the page. Please try again."
       onRetry={reset}
     />
   );

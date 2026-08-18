@@ -52,6 +52,7 @@ export default function PokemonDetailView({ pokemon, species }: PokemonDetailVie
             weight={formatWeight(pokemon.weight)}
             habitat={species.habitat}
             captureRate={species.captureRate}
+            evolutionChainId={species.evolutionChainId}
           />
         </section>
 

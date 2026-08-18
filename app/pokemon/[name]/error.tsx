@@ -3,7 +3,6 @@
 import ErrorMessage from "@/components/ui/ErrorMessage";
 
 export default function PokemonDetailError({
-  error,
   reset,
 }: {
   error: Error & { digest?: string };
@@ -12,7 +11,7 @@ export default function PokemonDetailError({
   return (
     <ErrorMessage
       title="Could not load Pokémon"
-      message={error.message || "Something prevented this Pokémon from loading."}
+      message="We couldn't load this Pokémon right now. Please try again."
       onRetry={reset}
     />
   );

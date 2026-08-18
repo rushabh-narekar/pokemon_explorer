@@ -1,5 +1,3 @@
-/** Narrow PokéAPI response shapes — only fields we map to domain models. */
-
 export interface PokemonListApiResponse {
   count: number;
   next: string | null;
@@ -79,6 +77,7 @@ export interface PokemonSpeciesInfo {
   habitat: string | null;
   description: string | null;
   captureRate: number | null;
+  evolutionChainId: number | null;
 }
 
 export interface PokemonListResult {

@@ -24,7 +24,7 @@ export default function SiteHeader() {
   return (
     <header className="site-header">
       <div className="site-header-inner">
-        <Link href="/" prefetch={false} className="site-brand group focus-pokemon">
+        <Link href="/" className="site-brand group focus-pokemon">
           <span
             className="site-brand-mark"
             aria-hidden="true"
@@ -44,7 +44,6 @@ export default function SiteHeader() {
                 <li key={item.href} className="min-w-0">
                   <Link
                     href={item.href}
-                    prefetch={false}
                     aria-current={active ? "page" : undefined}
                     className={cn(
                       "site-nav-link",
